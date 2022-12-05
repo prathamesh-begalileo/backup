@@ -1,0 +1,4313 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Report</title>
+    <style>
+      body {
+        margin: 0pt;
+        padding: 0pt;
+      }
+      .arjs-reportPage {
+        page-break-after: always;
+      }
+      @page {
+        margin: 0mm;
+      }
+    </style>
+    <style>
+      .arjs-reportPage,
+      .arjs-reportPage * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+      }
+
+      @media screen {
+        .arjs-hide-export {
+          visibility: hidden;
+        }
+      }
+
+      @media print {
+        .arjs-hide-paper {
+          visibility: hidden;
+        }
+      }
+
+      .arjs-reportPage {
+        background-color: white;
+        color: black;
+        font-family: Arial;
+        font-size: 10pt;
+        font-weight: normal;
+        font-style: normal;
+        text-rendering: optimizeSpeed;
+        text-decoration-skip-ink: none;
+      }
+
+      .arjs-canvasItem {
+        position: absolute;
+      }
+      .arjs-itemContent {
+        position: absolute;
+      }
+      .arjs-listItem {
+        position: relative;
+      }
+      .arjs-section {
+        position: relative;
+      }
+      .arjs-placeItem {
+        position: absolute;
+        z-index: inherit;
+      }
+      .arjs-tableItem {
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      .arjs-tableCell {
+        padding: 0;
+        vertical-align: top;
+      }
+      @-moz-document url-prefix() {
+        .arjs-tableCell {
+          height: 100%;
+        }
+      }
+      .arjs-cellContent {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+      }
+      .arjs-cellContent > div {
+        min-height: 100%;
+        min-width: 100%;
+      }
+      .arjs-cbControl {
+        width: 12px;
+        height: 12px;
+        min-width: 12px;
+        min-height: 12px;
+        border-width: 1px;
+        border-style: solid;
+      }
+
+      .arjs-cbCommon {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: center;
+      }
+
+      .arjs-cbTopLeft {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .arjs-cbTopRight {
+        align-items: flex-end;
+        text-align: right;
+      }
+
+      .arjs-cbMiddleLeft {
+        flex-direction: row;
+        text-align: left;
+      }
+
+      .arjs-cbMiddleCenter {
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .arjs-cbMiddleRight {
+        flex-direction: row-reverse;
+        text-align: right;
+      }
+
+      .arjs-cbBottomLeft {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .arjs-cbBottomCenter {
+        flex-direction: column-reverse;
+      }
+
+      .arjs-cbBottomRight {
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        text-align: right;
+      }
+
+      .arjs-cbTextCommon {
+        width: 100%;
+      }
+      .arjs-cbPadding {
+        padding-bottom: 0.75pt;
+      }
+
+      .arjs-cbTextTopLeft,
+      .arjs-cbTextBottomLeft {
+        padding-left: 14px;
+      }
+
+      .arjs-cbTextTopRight,
+      .arjs-cbTextBottomRight {
+        padding-right: 14px;
+      }
+
+      .arjs-cbTextMiddleLeft {
+        padding-left: 2px;
+        width: calc(100% - 2px);
+      }
+
+      .arjs-cbTextMiddleCenter {
+        position: absolute;
+      }
+
+      .arjs-cbTextMiddleRight {
+        padding-right: 2px;
+        width: calc(100% - 2px);
+      }
+
+      .arjs-textBoxItem {
+        display: flex;
+        position: absolute;
+        overflow: hidden;
+      }
+
+      .arjs-textBoxContent {
+        width: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+        transform-origin: left top;
+      }
+
+      .arjs-hideOverflow {
+        overflow: hidden;
+      }
+
+      .arjs-action {
+        cursor: pointer;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+      }
+
+      .arjs-action.arjs-control {
+        background-size: contain;
+        background-repeat: no-repeat;
+        display: inline-block;
+      }
+
+      .arjs-action.arjs-control.arjs-toggle-placeholder, /* ARJ-3744. Remove this class after drop IE support */
+.arjs-action.arjs-control.arjs-toggle-expanded,
+.arjs-action.arjs-control.arjs-toggle-collapsed {
+        min-width: 15px;
+        min-height: 15px;
+      }
+
+      .arjs-action.arjs-control.arjs-sort-placeholder, /* ARJ-3744. Remove this class after drop IE support */
+.arjs-action.arjs-control.arjs-sort-variant,
+.arjs-action.arjs-control.arjs-sort-ascending,
+.arjs-action.arjs-control.arjs-sort-descending {
+        min-width: 18px;
+        min-height: 18px;
+      }
+
+      .arjs-toggle-expanded {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE5LDEzSDEzVjE5SDExVjEzSDVWMTFIMTFWNUgxM1YxMUgxOVYxM1oiIC8+PC9zdmc+");
+      }
+
+      .arjs-toggle-collapsed {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE5LDEzSDVWMTFIMTlWMTNaIiAvPjwvc3ZnPg==");
+      }
+
+      /* ARJ-3744. Remove this class after drop IE support */
+      .arjs-icon-placeholder {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBoZWlnaHQ9IjI0IiB3aWR0aD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PC9zdmc+DQo=");
+      }
+
+      .arjs-sort-variant {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwLDEzVjExSDE4VjEzSDEwTTEwLDE5VjE3SDE0VjE5SDEwTTEwLDdWNUgyMlY3SDEwTTYsMTdIOC41TDUsMjAuNUwxLjUsMTdINFY3SDEuNUw1LDMuNUw4LjUsN0g2VjE3WiIgLz48L3N2Zz4=");
+      }
+
+      .arjs-sort-ascending {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwLDExVjEzSDE4VjExSDEwTTEwLDVWN0gxNFY1SDEwTTEwLDE3VjE5SDIyVjE3SDEwTTYsN0g4LjVMNSwzLjVMMS41LDdINFYyMEg2VjdaIiAvPjwvc3ZnPg==");
+      }
+
+      .arjs-sort-descending {
+        background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEwLDEzVjExSDE4VjEzSDEwTTEwLDE5VjE3SDE0VjE5SDEwTTEwLDdWNUgyMlY3SDEwTTYsMTdIOC41TDUsMjAuNUwxLjUsMTdINFY0SDZWMTdaIiAvPjwvc3ZnPg==");
+      }
+
+      .arjs-tocLevelLabel {
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+        white-space: pre-wrap;
+      }
+
+      .arjs-flex-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .arjs-barcode {
+        display: flex;
+      }
+      .arjs-barcode > div {
+        flex: 1;
+      }
+
+      .arjs-flex-textitem {
+        flex: 0 1 auto;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+        pointer-events: none;
+      }
+
+      .arjs-flex-textfiller {
+        flex: 1 1 auto;
+        position: relative;
+        overflow: hidden;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+        pointer-events: none;
+      }
+
+      .arjs-text-tab {
+        display: inline-block;
+        text-align: left;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+        pointer-events: none;
+      }
+
+      .arjs-float-r {
+        float: right;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+      }
+
+      .arjs-float-r-abs {
+        display: flex;
+        flex-direction: row-reverse;
+        position: absolute;
+        right: 0;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+      }
+
+      .arjs-char-wrap {
+        overflow-wrap: break-word;
+        text-decoration-style: inherit;
+        text-decoration-line: inherit;
+      }
+
+      .arjs-bordersItem {
+        pointer-events: none;
+      }
+
+      .arjs-errorMessage {
+        font-size: 10pt;
+        color: Black;
+        padding: 2pt;
+      }
+
+      .arjs-inputField {
+        display: table-cell;
+        vertical-align: middle;
+        height: 100%;
+      }
+
+      .arjs-inputFieldBase {
+        position: relative;
+        display: table;
+        height: 100%;
+        width: 100%;
+      }
+
+      .arjs-fullSize {
+        width: 100%;
+        height: 100%;
+      }
+
+      .arjs-textRun {
+        overflow: hidden;
+      }
+
+      .arjs-textLine {
+        white-space: nowrap;
+        display: block;
+        text-indent: initial;
+      }
+
+      .arjs-textLine:last-child {
+        text-align-last: auto;
+      }
+
+      .arjs-textLine:first-child {
+        text-indent: inherit;
+      }
+
+      .arjs-richtext-list-item {
+        display: flex;
+        align-items: baseline;
+      }
+
+      .arjs-richtext-list-item__content {
+        flex-grow: 1; /* let the list item content take all available space */
+      }
+
+      .arjs-richtext-list-item__marker {
+        display: flex;
+        justify-content: flex-end;
+        text-indent: 0;
+      }
+
+      .arjs-upright {
+        -webkit-text-combine: horizontal; /* Safari */
+        text-combine-upright: all;
+      }
+
+      .arjs-frozen-row {
+        position: sticky;
+      }
+
+      .arjs-frozen-cell {
+        position: sticky;
+        z-index: 2;
+      }
+
+      .arjs-cell-outline-borders {
+        border-color: transparent !important;
+        border-style: solid !important;
+      }
+
+      .arjs-cell-outline-borders > div > div {
+        position: absolute;
+      }
+
+      .arjs-cell-outline-borders > div {
+        width: 100%;
+        height: 100%;
+      }
+
+      .arjs-frozen-cell > div > div {
+        left: 0pt;
+        top: 0pt;
+      }
+
+      /* see node_modules/gc-dv/lib/gcdv.css */
+      .gcdv-tooltip {
+        position: absolute;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        max-width: 400px;
+        padding: 6px;
+        background-color: #ffffe5;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        box-sizing: border-box;
+      }
+    </style>
+    <style>
+      .rpt1__Page_0__SiteBordersStyle {
+        width: calc(100% + 0.5 * (1pt + 1pt));
+        height: calc(100% + 0.5 * (1pt + 1pt));
+        left: calc(-0.5 * 1pt);
+        top: calc(-0.5 * 1pt);
+        border: 1pt Solid #e4e4e4;
+      }
+      .rpt1Container3SiteDecorStyle {
+        background-color: #f1f1f1;
+        background-repeat: Repeat;
+        z-index: 15;
+      }
+      .rpt1Container5SiteDecorStyle {
+        background-color: #f1f1f1;
+        background-repeat: Repeat;
+        z-index: 19;
+      }
+      .rpt1__Page_1__SiteBordersStyle {
+        width: calc(100% + 0.5 * (1pt + 1pt));
+        height: calc(100% + 0.5 * (1pt + 1pt));
+        left: calc(-0.5 * 1pt);
+        top: calc(-0.5 * 1pt);
+        border: 1pt Solid #e4e4e4;
+      }
+      .rpt1Container4SiteDecorStyle {
+        background-color: #f1f1f1;
+        background-repeat: Repeat;
+        z-index: 15;
+      }
+      .rpt1Container6SiteDecorStyle {
+        background-color: #f1f1f1;
+        background-repeat: Repeat;
+        z-index: 19;
+      }
+      .rpt1TextBox55Style {
+        color: Teal;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 12pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 0pt 2pt 6pt;
+      }
+      .rpt1TextBox129Style {
+        color: Teal;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 12pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox3Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox26Style {
+        color: Teal;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 12pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox6Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox155Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox7Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox8Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox29Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox30Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox21Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox9Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox5Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox17Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox18Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox16Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox22Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox22CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Gainsboro;
+        border-right: 1pt None Gainsboro;
+        border-bottom: 1pt Solid Gainsboro;
+        border-left: 1pt None Gainsboro;
+      }
+      .rpt1TextBox22CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox39Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox39CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Gainsboro;
+        border-right: 1pt None Gainsboro;
+        border-bottom: 1pt Solid Gainsboro;
+        border-left: 1pt None Gainsboro;
+      }
+      .rpt1TextBox39CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox44Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox44CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Gainsboro;
+        border-right: 1pt None Gainsboro;
+        border-bottom: 1pt Solid Gainsboro;
+        border-left: 1pt None Gainsboro;
+      }
+      .rpt1TextBox44CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox45Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox45CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Gainsboro;
+        border-right: 1pt None Gainsboro;
+        border-bottom: 1pt Solid Gainsboro;
+        border-left: 1pt None Gainsboro;
+      }
+      .rpt1TextBox45CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox48Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox48CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox48CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox40Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox40CellCellStyle {
+        vertical-align: Bottom;
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox40CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox41Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox41CellCellStyle {
+        vertical-align: Bottom;
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox41CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox42Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox42CellCellStyle {
+        vertical-align: Bottom;
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox42CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1Tablix4Style {
+        z-index: 19;
+      }
+      .rpt1TextBox4Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox27Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        line-height: 135%;
+        padding: 6pt 2pt 2pt 2pt;
+      }
+      .rpt1TextBox67Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox68Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox2Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox38Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox65Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox66Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox19Style {
+        color: Teal;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 12pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox46Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox46CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox46CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox51Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox51CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox51CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox23Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox23CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox23CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox28Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox28CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox28CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox24Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox24CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox24CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox25Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 0pt 2pt 0.55in;
+      }
+      .rpt1TextBox25CellCellStyle {
+        vertical-align: Bottom;
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox25CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox49Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox49CellCellStyle {
+        vertical-align: Bottom;
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox49CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox34Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox34CellCellStyle {
+        vertical-align: Bottom;
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox34CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1Tablix1Style {
+        z-index: 19;
+      }
+      .rpt1TextBox75Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 16pt;
+      }
+      .rpt1TextBox75SiteDecorStyle {
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        z-index: 20;
+      }
+      .rpt1TextBox52Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 16pt;
+      }
+      .rpt1TextBox52SiteDecorStyle {
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        z-index: 20;
+      }
+      .rpt1TextBox76Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 16pt;
+      }
+      .rpt1TextBox76SiteDecorStyle {
+        background-color: Transparent;
+        background-repeat: no-repeat;
+        z-index: 20;
+      }
+      .rpt1TextBox64Style {
+        color: Black;
+        align-items: flex-end;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 500;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 0.4in;
+      }
+      .rpt1TextBox64CellCellStyle {
+        vertical-align: Bottom;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox64CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox37Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox37CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox37CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox60Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox60CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox60CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox62Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox62CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox62CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox58Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox58CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox58CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox59Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox59CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox59CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox61Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox61CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox61CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox63Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox63CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox63CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1Tablix3Style {
+        z-index: 17;
+      }
+      .rpt1TextBox69Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox1Style {
+        color: Gray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 300;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1TextBox57Style {
+        color: Gray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 300;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1Image1Style {
+        background-image: footer-phone;
+        background-size: 100% 100%;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+        padding: 0pt;
+        background-position: left top;
+      }
+      .rpt1TextBox70Style {
+        color: Gray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 300;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1Image2Style {
+        background-image: footer-phone;
+        background-size: 100% 100%;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+        padding: 0pt;
+        background-position: left top;
+      }
+      .rpt1Image6Style {
+        background-image: treadstone-logo-full-color-rgb;
+        background-size: contain;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+        padding: 0pt 0.4in 0pt 0pt;
+        background-position: left center;
+      }
+      .rpt1TextBox74Style {
+        color: #3da7a8;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 22.5pt;
+        font-style: normal;
+        font-weight: 500;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt 0pt 0pt 0.4in;
+      }
+      .rpt1TextBox74SiteDecorStyle {
+        background-repeat: Repeat;
+        z-index: 22;
+      }
+      .rpt1Table1Style {
+        z-index: 5;
+      }
+      .rpt1TextBox10Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox10CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox10CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox11Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox11CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox11CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox47Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox47CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox47CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox31Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox31CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox31CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox33Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox33CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox33CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox81Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox81CellCellStyle {
+        vertical-align: Top;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox81CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox78Style {
+        color: #551e5f;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox78CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox78CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox79Style {
+        color: #551e5f;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox79CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox79CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox80Style {
+        color: #551e5f;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox80CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox80CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox82Style {
+        color: #551e5f;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox82CellCellStyle {
+        vertical-align: Middle;
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox82CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox13Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox13CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox13CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox14Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox14CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox14CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox20Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox20CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox20CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox35Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox35CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox35CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1TextBox36Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox36CellCellStyle {
+        vertical-align: Middle;
+        border-top: 1pt None Black;
+        border-right: 1pt None Black;
+        border-bottom: 1pt Solid #e4e4e4;
+        border-left: 1pt None Black;
+      }
+      .rpt1TextBox36CellCellContentStyle {
+        margin: calc(-0.5 * 0pt) calc(-0.5 * 0pt) calc(-0.5 * 1pt)
+          calc(-0.5 * 0pt);
+      }
+      .rpt1__TextBox13_filler__Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1__TextBox13_filler__CellCellStyle {
+        vertical-align: Top;
+      }
+      .rpt1__TextBox14_filler__Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1__TextBox14_filler__CellCellStyle {
+        vertical-align: Top;
+      }
+      .rpt1__TextBox20_filler__Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1__TextBox20_filler__CellCellStyle {
+        vertical-align: Top;
+      }
+      .rpt1__TextBox35_filler__Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1__TextBox35_filler__CellCellStyle {
+        vertical-align: Top;
+      }
+      .rpt1__TextBox36_filler__Style {
+        color: Black;
+        align-items: flex-start;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Arial";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1__TextBox36_filler__CellCellStyle {
+        vertical-align: Top;
+      }
+      .rpt1TextBox54Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox50Style {
+        color: Teal;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 12pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt 0pt 0pt 6pt;
+      }
+      .rpt1TextBox12Style {
+        color: Gray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 300;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1Image7Style {
+        background-image: footer-phone;
+        background-size: 100% 100%;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+        padding: 0pt;
+        background-position: left top;
+      }
+      .rpt1Image8Style {
+        background-image: footer-phone;
+        background-size: 100% 100%;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+        padding: 0pt;
+        background-position: left top;
+      }
+      .rpt1TextBox86Style {
+        color: Gray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 300;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1TextBox87Style {
+        color: Gray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: 300;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt;
+      }
+      .rpt1TextBox56Style {
+        color: DimGray;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt;
+      }
+      .rpt1TextBox83Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox85Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox72Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 0pt 2pt 6pt;
+      }
+      .rpt1TextBox72SiteDecorStyle {
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+      }
+      .rpt1TextBox72SiteBordersStyle {
+        width: calc(100% + 0.5 * (0pt + 0pt));
+        height: calc(100% + 0.5 * (0pt + 0.25pt));
+        left: calc(-0.5 * 0pt);
+        top: calc(-0.5 * 0pt);
+        border-top: 0.25pt None Black;
+        border-right: 0.25pt None Black;
+        border-bottom: 0.25pt Solid #e4e4e4;
+        border-left: 0.25pt None Black;
+      }
+      .rpt1TextBox73Style {
+        color: Black;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: normal;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 2pt 2pt 2pt 6pt;
+      }
+      .rpt1TextBox73SiteDecorStyle {
+        background-color: #f8f8f8;
+        background-repeat: Repeat;
+      }
+      .rpt1TextBox73SiteBordersStyle {
+        width: calc(100% + 0.5 * (0pt + 0pt));
+        height: calc(100% + 0.5 * (0pt + 0.25pt));
+        left: calc(-0.5 * 0pt);
+        top: calc(-0.5 * 0pt);
+        border-top: 0.25pt None Black;
+        border-right: 0.25pt None Black;
+        border-bottom: 0.25pt Solid #e4e4e4;
+        border-left: 0.25pt None Black;
+      }
+      .rpt1TextBox71Style {
+        color: #3da7a8;
+        align-items: center;
+        text-decoration-line: none;
+        text-justify: Auto;
+        font-family: "Montserrat";
+        font-size: 22.5pt;
+        font-style: normal;
+        font-weight: 500;
+        direction: LTR;
+        word-wrap: break-word;
+        word-break: normal;
+        white-space: normal;
+        padding: 0pt 0pt 0pt 0.4in;
+      }
+      .rpt1TextBox71SiteDecorStyle {
+        background-repeat: Repeat;
+        z-index: 22;
+      }
+      .rpt1Image3Style {
+        background-image: treadstone-logo-full-color-rgb;
+        background-size: contain;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-origin: content-box;
+        padding: 0pt 0.4in 0pt 0pt;
+        background-position: left center;
+      }
+      .rpt1_67B1D944Img {
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAfpJREFUeNq8l00oRFEUx2d8UyhSClGW0jQREspGSSyUIjuTIllJ+Uj5SrJBahaUr0QpFj52JLKxYChEWdlZSAj5qOd/6kzdpnvnvTHvOvVr3pxz3vzvve/c8+44DcNwuN1ux3+az+dzRJjkVIFpUGq3eJTCHw1cYAvEglaQAZ7sElbN2Av2QSR/jwceO2csEy4ELSApIN4WZKBhCzvBpOAX47mgWpdwEygLkt+pQzgBTJjkl/EjsLWqPVy5MnsAMaALvNg949sgecsgBSzoWOpD8CrJuQCDdjcQUfgTrCr29LtOYbI5SQ4VXL5u4VNwFOBL5taZprtzDUh8OWCbK1ubMM14T+IvBvPc3bS9JLrBj8TfDPp0Cp+DGUVsBDToEibrBzcSPy31Ii+9FuEPXtoPSYz6+gbIVNybFaT9mgqTnYF2RYx+eIcHIVoJuOKOV/NXYbIlMK6I0fFoTTippIJakMjXtAXHhHhIwg6u5FlFrA6MgkpwyY/nS6iHXnAQuPRWhQ0++ngV8R7e++kgmwXF2iinUy3IC1XYL97BszNMHhudUuPAt5BLLbfgL8JiS20EbyZ5Th4AfT6DY7AbjjDZOijiqrdiU7zcj+EKk13z1hkSikm0exasAMNW/0lYtW8+nazwe9vFjWUTnChqwRZhv92B+lBu+BVgAOirV+Y3t0ZPAAAAAElFTkSuQmCC");
+      }
+      .rpt1_1A0D702BImg {
+        background-image: url("data:image/png;base64,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");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 100;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Thin.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 100;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-ThinItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 200;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-ExtraLight.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 200;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-ExtraLightItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 300;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Light.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 300;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-LightItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 400;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Regular.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 400;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Italic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-weight: 500;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Medium.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 500;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-MediumItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 600;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-SemiBold.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 600;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-SemiBoldItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 700;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Bold.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 700;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-BoldItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 800;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-ExtraBold.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 800;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-ExtraBoldItalic.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 900;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-Black.ttf");
+      }
+      @font-face {
+        font-family: "Montserrat";
+        font-style: italic;
+        font-weight: 900;
+        src: url("/activereportsjs/demos/resource/Fonts/Montserrat/Montserrat-BlackItalic.ttf");
+      }
+      @font-face {
+        font-family: "Arial";
+        font-style: normal;
+        font-weight: 400;
+        src: url("/activereportsjs/demos/resource/Fonts/Arial/arial.ttf");
+      }
+      @font-face {
+        font-family: "Arial";
+        font-style: italic;
+        font-weight: 400;
+        src: url("/activereportsjs/demos/resource/Fonts/Arial/ariali.ttf");
+      }
+      @font-face {
+        font-family: "Arial";
+        font-style: normal;
+        font-weight: 700;
+        src: url("/activereportsjs/demos/resource/Fonts/Arial/arialbd.ttf");
+      }
+      @font-face {
+        font-family: "Arial";
+        font-style: italic;
+        font-weight: 700;
+        src: url("/activereportsjs/demos/resource/Fonts/Arial/arialbi.ttf");
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="arjs-reportPage"
+      style="width: 8.27in; height: 11.69in; padding: 0in; position: relative"
+    >
+      <div style="position: relative; width: 595.4pt; height: 841.65pt">
+        <div
+          class="undefined arjs-section"
+          style="width: 595.4pt; height: 841.65pt; z-index: 0"
+        >
+          <div
+            class="arjs-itemContent arjs-container arjs-placeItem"
+            style="width: 595.4pt; height: 841.65pt"
+          >
+            <div
+              class="arjs-itemContent arjs-container arjs-canvasItem"
+              style="
+                width: 540pt;
+                height: 145.4pt;
+                z-index: 3;
+                left: 28.8pt;
+                top: 108pt;
+              "
+            >
+              <div
+                id="dc_2"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox3Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 100.75pt;
+                  height: 21.65pt;
+                  left: 0pt;
+                  top: 32.4pt;
+                  z-index: 0;
+                "
+              >
+                <div class="arjs-textBoxContent">Enrollment Date:</div>
+              </div>
+              <div
+                id="dc_3"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox6Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 122.4pt;
+                  height: 21.65pt;
+                  left: 108pt;
+                  top: 32.4pt;
+                  z-index: 3;
+                "
+              >
+                <div class="arjs-textBoxContent">12/2/2014</div>
+              </div>
+              <div
+                id="dc_4"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox7Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 122.4pt;
+                  height: 21.65pt;
+                  left: 108pt;
+                  top: 54pt;
+                  z-index: 4;
+                "
+              >
+                <div class="arjs-textBoxContent">Chamela Rhodes</div>
+              </div>
+              <div
+                id="dc_5"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox8Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 100.75pt;
+                  height: 21.65pt;
+                  left: 0pt;
+                  top: 54pt;
+                  z-index: 5;
+                "
+              >
+                <div class="arjs-textBoxContent">Student Name:</div>
+              </div>
+              <div
+                id="dc_6"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox29Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 122.4pt;
+                  height: 21.65pt;
+                  left: 108pt;
+                  top: 10.8pt;
+                  z-index: 6;
+                "
+              >
+                <div class="arjs-textBoxContent">31211995</div>
+              </div>
+              <div
+                id="dc_7"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox30Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 100.75pt;
+                  height: 21.65pt;
+                  left: 0pt;
+                  top: 10.8pt;
+                  z-index: 7;
+                "
+              >
+                <div class="arjs-textBoxContent">Enrollement ID :</div>
+              </div>
+              <div
+                id="dc_8"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox21Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 97.2pt;
+                  height: 21.65pt;
+                  left: 248.4pt;
+                  top: 10.8pt;
+                  z-index: 9;
+                "
+              >
+                <div class="arjs-textBoxContent">Date OF Birth:</div>
+              </div>
+              <div
+                id="dc_9"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox9Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 190.45pt;
+                  height: 21.65pt;
+                  left: 346.5pt;
+                  top: 10.8pt;
+                  z-index: 10;
+                "
+              >
+                <div class="arjs-textBoxContent">9/2/2009</div>
+              </div>
+              <div
+                id="dc_10"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox5Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 97.2pt;
+                  height: 21.65pt;
+                  left: 248.4pt;
+                  top: 54pt;
+                  z-index: 11;
+                "
+              >
+                <div class="arjs-textBoxContent">Mother's Name:</div>
+              </div>
+              <div
+                id="dc_11"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox17Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 190.45pt;
+                  height: 21.65pt;
+                  left: 346.5pt;
+                  top: 54pt;
+                  z-index: 12;
+                "
+              >
+                <div class="arjs-textBoxContent">Maia Rhodes</div>
+              </div>
+              <div
+                id="dc_12"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox18Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 190.45pt;
+                  height: 21.65pt;
+                  left: 346.5pt;
+                  top: 32.4pt;
+                  z-index: 13;
+                "
+              >
+                <div class="arjs-textBoxContent">John H. Rhodes</div>
+              </div>
+              <div
+                id="dc_13"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox16Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 97.2pt;
+                  height: 21.65pt;
+                  left: 248.4pt;
+                  top: 32.4pt;
+                  z-index: 14;
+                "
+              >
+                <div class="arjs-textBoxContent">Father's Name:</div>
+              </div>
+              <div
+                id="dc_14"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox4Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 97.2pt;
+                  height: 25.2pt;
+                  left: 248.4pt;
+                  top: 97.2pt;
+                  z-index: 5;
+                "
+              >
+                <div class="arjs-textBoxContent">Address:</div>
+              </div>
+              <div
+                id="dc_15"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox27Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 190.45pt;
+                  height: 37.85pt;
+                  left: 346.5pt;
+                  top: 97.2pt;
+                  z-index: 4;
+                "
+              >
+                <div class="arjs-textBoxContent">
+                  2528 Dane Street Washington, WA 20004
+                </div>
+              </div>
+              <div
+                id="dc_16"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox67Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 122.4pt;
+                  height: 21.65pt;
+                  left: 108pt;
+                  top: 75.6pt;
+                  z-index: 4;
+                "
+              >
+                <div class="arjs-textBoxContent">5th</div>
+              </div>
+              <div
+                id="dc_17"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox68Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 100.75pt;
+                  height: 21.65pt;
+                  left: 0pt;
+                  top: 75.6pt;
+                  z-index: 5;
+                "
+              >
+                <div class="arjs-textBoxContent">Grade:</div>
+              </div>
+              <div
+                id="dc_18"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox2Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 122.4pt;
+                  height: 21.65pt;
+                  left: 108pt;
+                  top: 97.2pt;
+                  z-index: 4;
+                "
+              >
+                <div class="arjs-textBoxContent">2021 - 2022</div>
+              </div>
+              <div
+                id="dc_19"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox38Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 100.75pt;
+                  height: 21.65pt;
+                  left: 0pt;
+                  top: 97.2pt;
+                  z-index: 5;
+                "
+              >
+                <div class="arjs-textBoxContent">Year:</div>
+              </div>
+              <div
+                id="dc_20"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox65Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 97.2pt;
+                  height: 21.65pt;
+                  left: 248.4pt;
+                  top: 75.6pt;
+                  z-index: 5;
+                "
+              >
+                <div class="arjs-textBoxContent">Phone Number:</div>
+              </div>
+              <div
+                id="dc_21"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox66Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 190.45pt;
+                  height: 21.65pt;
+                  left: 346.5pt;
+                  top: 75.6pt;
+                  z-index: 4;
+                "
+              >
+                <div class="arjs-textBoxContent">509-979-0955</div>
+              </div>
+            </div>
+            <div
+              class="arjs-itemContent arjs-container rpt1Container3SiteDecorStyle arjs-canvasItem"
+              style="width: 595.4pt; height: 43.9pt; left: 0pt; top: 797.7pt"
+            >
+              <div
+                id="dc_80"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox12Style arjs-canvasItem"
+                style="
+                  text-align: right;
+                  flex-direction: row;
+                  width: 243pt;
+                  height: 43.25pt;
+                  left: 33.05pt;
+                  top: 0.35pt;
+                  z-index: 0;
+                "
+              >
+                <div class="arjs-textBoxContent">
+                  © 2022 GrapeCity, Inc. All Rights Reserved.
+                </div>
+              </div>
+              <div
+                class="arjs-itemContent arjs-imageItem rpt1Image7Style rpt1_67B1D944Img arjs-canvasItem"
+                data-sizemode="Fit"
+                style="
+                  width: 14.4pt;
+                  height: 14.4pt;
+                  left: 389.55pt;
+                  top: 14.75pt;
+                  z-index: 1;
+                "
+              ></div>
+              <div
+                class="arjs-itemContent arjs-imageItem rpt1Image8Style rpt1_67B1D944Img arjs-canvasItem"
+                data-sizemode="Fit"
+                style="
+                  width: 14.4pt;
+                  height: 14.4pt;
+                  left: 284.9pt;
+                  top: 14.75pt;
+                  z-index: 1;
+                "
+              ></div>
+              <div
+                id="dc_81"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox86Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 151.2pt;
+                  height: 43.25pt;
+                  left: 411.15pt;
+                  top: 0.35pt;
+                  z-index: 0;
+                "
+              >
+                <div class="arjs-textBoxContent">
+                  Pittsburgh, PA:412.681.4343
+                </div>
+              </div>
+              <div
+                id="dc_82"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox87Style arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 75.1pt;
+                  height: 43.25pt;
+                  left: 306.35pt;
+                  top: 0.35pt;
+                  z-index: 0;
+                "
+              >
+                <div class="arjs-textBoxContent">1800.858.2739</div>
+              </div>
+            </div>
+            <div
+              class="arjs-itemContent arjs-container rpt1Container5SiteDecorStyle arjs-canvasItem"
+              style="width: 595.4pt; height: 64.8pt; left: 0pt; top: 0pt"
+            >
+              <div
+                id="dc_88"
+                class="arjs-itemContent arjs-textBoxItem rpt1TextBox71Style rpt1TextBox71SiteDecorStyle arjs-canvasItem"
+                style="
+                  text-align: left;
+                  flex-direction: row;
+                  width: 324pt;
+                  height: 64.85pt;
+                  left: 0pt;
+                  top: 0pt;
+                "
+              >
+                <div class="arjs-textBoxContent">Student Progress Report</div>
+              </div>
+              <div
+                class="arjs-itemContent arjs-imageItem rpt1Image3Style rpt1_1A0D702BImg arjs-canvasItem"
+                data-sizemode="FitProportional"
+                style="
+                  width: 176pt;
+                  height: 27pt;
+                  left: 419.25pt;
+                  top: 18.9pt;
+                  z-index: 30;
+                "
+              ></div>
+            </div>
+            <div
+              id="dc_1"
+              class="arjs-itemContent arjs-textBoxItem rpt1TextBox55Style arjs-canvasItem"
+              style="
+                text-align: left;
+                flex-direction: row;
+                width: 536.95pt;
+                height: 21.65pt;
+                left: 28.8pt;
+                top: 259.2pt;
+                z-index: 0;
+              "
+            >
+              <div class="arjs-textBoxContent">GPA Summary</div>
+            </div>
+            <div
+              id="dc_22"
+              class="arjs-itemContent arjs-textBoxItem rpt1TextBox19Style arjs-canvasItem"
+              style="
+                text-align: left;
+                flex-direction: row;
+                width: 536.95pt;
+                height: 21.65pt;
+                left: 28.55pt;
+                top: 367.15pt;
+                z-index: 0;
+              "
+            >
+              <div class="arjs-textBoxContent">Academic Progress</div>
+            </div>
+            <table
+              class="arjs-tableItem rpt1Table1Style arjs-canvasItem"
+              data-name="rpt1Table1_15"
+              style="width: 536.9pt; height: 316.8pt; left: 29.25pt; top: 396pt"
+            >
+              <colgroup>
+                <col style="width: 192.2pt" />
+                <col style="width: 129.75pt" />
+                <col style="width: 71.65pt" />
+                <col style="width: 71.65pt" />
+                <col style="width: 71.65pt" />
+              </colgroup>
+              <tbody>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox10CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_23"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox10Style rpt1TextBox10CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Subject</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox11CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_34"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox11Style rpt1TextBox11CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Teacher</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox47CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_45"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox47Style rpt1TextBox47CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Trimester 1</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox31CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_56"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox31Style rpt1TextBox31CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Trimester 2</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox33CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_67"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox33Style rpt1TextBox33CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Trimester 3</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_24"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">
+                          English (Grammar &amp; Usage)
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_35"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Ryan G. Farrer</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_46"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">C</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_57"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_68"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_25"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">
+                          Engligh (Reading &amp; Comprehension)
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_36"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Elaine Latimer</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_47"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_58"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">C</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_69"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_26"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Mathematics</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_37"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Steven C. Martin</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_48"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">A</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_59"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">A</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_70"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">A</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_27"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Science</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_38"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Windy Ledoux</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_49"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">C</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_60"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">C</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_71"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">C</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_28"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Social Studies</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_39"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Gina Walker</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_50"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_61"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_72"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_29"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">
+                          Electives - Physical Education
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_40"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">
+                          Danelle J. Christian
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_51"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">A</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_62"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">D</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_73"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_30"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">
+                          Electives - Fine Arts
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_41"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Cora M. Hubbard</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_52"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_63"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">C</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_74"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">A</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_31"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">
+                          Electives - Computers
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_42"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Jennifer Pell</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_53"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_64"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_75"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox13CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_32"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox13Style rpt1TextBox13CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          font-size: 10pt;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Electives - Music</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox14CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_43"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox14Style rpt1TextBox14CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Lory Comstock</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox20CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_54"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox20Style rpt1TextBox20CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox35CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_65"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox35Style rpt1TextBox35CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">B</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox36CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_76"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox36Style rpt1TextBox36CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">A</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr style="height: 28.75pt">
+                  <td
+                    class="arjs-tableCell rpt1TextBox81CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_33"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox81Style rpt1TextBox81CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 192.2pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox78CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_44"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox78Style rpt1TextBox78CellCellContentStyle"
+                        style="
+                          text-align: left;
+                          flex-direction: row;
+                          width: 129.75pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">Cumulative GPA:</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox79CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_55"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox79Style rpt1TextBox79CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">3.0</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox80CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_66"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox80Style rpt1TextBox80CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">2.0</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="arjs-tableCell rpt1TextBox82CellCellStyle"
+                    colspan="1"
+                    rowspan="1"
+                  >
+                    <div class="arjs-cellContent">
+                      <div
+                        id="dc_77"
+                        class="arjs-itemContent arjs-textBoxItem rpt1TextBox82Style rpt1TextBox82CellCellContentStyle"
+                        style="
+                          text-align: center;
+                          flex-direction: row;
+                          width: 71.65pt;
+                          height: 28.85pt;
+                          left: 0pt;
+                          top: 0pt;
+                        "
+                      >
+                        <div class="arjs-textBoxContent">3.0</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <style>
+        .arjs-control {
+          display: none !important;
+        }
+      </style>
+    </div>
+  </body>
+  <script>
+    function onActionClick(event) {
+      var action =
+        event &&
+        event.target &&
+        event.target.dataset &&
+        event.target.dataset.action &&
+        JSON.parse(event.target.dataset.action);
+      if (action) {
+        switch (action.Type) {
+          case "hyperlink":
+            window.open(action.Target, "_blank");
+            break;
+          case "bookmark":
+            window.location.href =
+              window.location.href.replace(window.location.hash, "") +
+              "#" +
+              action.Target;
+            break;
+        }
+      }
+    }
+    document.addEventListener("click", onActionClick);
+  </script>
+</html>
